@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html ng-app="cuwyApp" ng-controller="PatientListCtrl">
+<head>
+	<meta charset=utf-8>
+	<title>ХОКЛ</title>
+	<link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+	<style type="text/css">
+	.row h2 { margin-top: 0px; }
+	</style>
+</head>
+<body>
+	<ol class="breadcrumb">
+		<li><a href="index.html">Home</a></li>
+		<li class="active">Реанімація</li>
+	</ol>
+	<h1>Реанімація</h1>
+	<div class="row">
+		<div class="col-md-2">
+			<h2>Пацієнти</h2>
+		</div>
+		<div class="col-md-4">
+
+			<ul id="patientsTab" class="nav nav-tabs">
+				<li class="active"><a href="#patient_seek" data-toggle="tab">Пошук</a></li>
+				<li><a href="#patient_new" data-toggle="tab">Новий</a></li>
+			</ul>
+			<div id="patientsTabContent" class="tab-content">
+				<div class="tab-pane fade in active" id="patient_seek">
+					<!-- Sidebar content -->
+
+					<div class="input-group">
+						<span class="input-group-addon">Пошук:</span>
+						<input ng-model="query" type="text" class="form-control" placeholder="Перші букви пошуку">
+					</div>
+
+					<ul class="patients">
+						<li ng-repeat="patient in patients | filter:query">
+							<a href="{{patient.url}}">{{patient.name}}</a>,
+							<span>Дз: {{patient.diagnosis}}</span>
+						</li>
+					</ul>
+				</div>
+				<div class="tab-pane fade " id="patient_new">
+					<div class="input-group">
+						<span class="input-group-addon">Паціент</span>
+						<input name="patient" type="text" class="form-control" placeholder="Ім’я пацієнта">
+					</div>
+					<div class="input-group">
+						<span class="input-group-addon">Діагноз</span>
+						<input name="diagnosis" type="text" class="form-control" placeholder="Актуальний діагноз">
+					</div>
+					<button type="button" ng-click="addNewPatien()" class="btn btn-default">
+						<span class="glyphicon glyphicon-star"></span> Прийняти
+					</button>
+					<button type="button" class="btn btn-default">
+						<span class="glyphicon glyphicon-star"></span> Скасувати
+					</button>
+				</div>
+			</div>
+<!-- 
+http://twbs.site-konstruktor.com.ua/javascript/#tabs
+ -->
+			
+		</div>
+		<div class="col-md-2">
+			<h2>Відділення</h2>
+		</div>
+	</div>
+
+	<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+	<script src="http://getbootstrap.com/dist/js/bootstrap.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.min.js"></script>
+	<script type="text/javascript">
+	/* TODO
+	http://scotch.io/tutorials/javascript/submitting-ajax-forms-the-angularjs-way
+	*/
+	
+	var cuwyApp = angular.module('cuwyApp', []);
+
+	cuwyApp.controller('PatientListCtrl',['$scope', '$http', function ($scope, $http) {
+		
+		$scope.addNewPatien = function(){
+			console.log("--------$scope.addNewPatien = function(){------")
+			var patienDiagnose = new Object();
+			patienDiagnose.name = "n1";
+			patienDiagnose.diagnose = "d1";
+			patienDiagnose.url = "u1";
+			var postNewPatien = $http({
+				method : 'POST',
+				data : $scope.patients,
+				url : 'addNewPatien'
+			});
+		}
+		
+		$http({
+				method : 'GET',
+				url : 'db/patients.json'
+			}).success(function(data, status, headers, config) {
+				$scope.patients = data;
+			}).error(function(data, status, headers, config) {
+				console.log("db/patients.json read ERROR");
+			});
+
+	} ]);
+	</script>
+
+</body>
+</html>
